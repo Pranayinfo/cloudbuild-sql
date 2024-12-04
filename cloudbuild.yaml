@@ -49,5 +49,6 @@ substitutions:
   _DESTINATION_PROJECT_ID: staging-443710
   _DESTINATION_DATABASE_NAME: demo-db
   _DESTINATION_BUCKET_NAME: dump-sql-pranay
-
+options:
+  logging: CLOUD_LOGGING_ONLY 
 timeout: "1200s"  # Set timeout for long-running operations
