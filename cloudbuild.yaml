@@ -1,3 +1,4 @@
+##
 steps:
   # Step 1: Export PostgreSQL database to a .sql dump file and save it to the source Cloud Storage bucket
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
