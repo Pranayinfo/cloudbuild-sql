@@ -1,18 +1,25 @@
-###
 steps:
-  # Step 1: Export the database to a SQL file
+  # Step 1: Set the correct project configuration
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud config set project feisty-return-438307-f5
+
+  # Step 2: Export the database to a SQL file
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         gcloud sql export sql \
-          feisty-return-438307-f5:us-central1:d3v-5 \
+          d3v-5 \
           gs://demo-bucket-sql-dump/d3v-db-export.sql \
           --database=d3v-db \
           --quiet
 
 options:
   logging: CLOUD_LOGGING_ONLY
-  
-timeout: "1200s"  # Set timeout for long-running operations
+
+timeout: '600s'
