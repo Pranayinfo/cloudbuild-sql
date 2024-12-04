@@ -1,54 +1,17 @@
-##
 steps:
-  # Step 1: Export PostgreSQL database to a .sql dump file and save it to the source Cloud Storage bucket
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
+  # Step 1: Export the database to a SQL file
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:latest'
+    entrypoint: 'bash'
     args:
-      - "-c"
+      - '-c'
       - |
-        echo "Exporting database 'd3v-db' from source Cloud SQL instance..."
         gcloud sql export sql \
           feisty-return-438307-f5:us-central1:d3v-5 \
-          gs://dump-sql-pranay/db-dump.sql \
+          gs://demo-bucket-sql-dump/d3v-db-export.sql \
           --database=d3v-db \
-          --project=prod-443109
-        echo "Export complete. SQL dump saved to gs://dump-sql-pranay/db-dump.sql."
+          --quiet
 
-  # Step 2: Copy the dump file from the source bucket to the destination bucket
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        echo "Copying SQL dump to the destination bucket..."
-        gsutil cp \
-          gs://dump-sql-pranay/db-dump.sql \
-          gs://demo-bucket-sql-dump/db-dump.sql
-        echo "File copied successfully to gs://demo-bucket-sql-dump/db-dump.sql."
-
-  # Step 3: Import the SQL dump into the destination Cloud SQL instance
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - "-c"
-      - |
-        echo "Importing database into destination Cloud SQL instance..."
-        gcloud sql import sql \
-          staging-443710:us-central1:staging-sql \
-          gs://demo-bucket-sql-dump/db-dump.sql \
-          --database=demo-db \
-          --project=staging-443710
-        echo "Import complete."
-
-substitutions:
-  _SOURCE_INSTANCE_CONNECTION_NAME: feisty-return-438307-f5:us-central1:d3v-5
-  _SOURCE_PROJECT_ID: feisty-return-438307-f5
-  _SOURCE_DATABASE_NAME: d3v-db
-  _SOURCE_BUCKET_NAME:  demo-bucket-sql-dump
-  _DESTINATION_INSTANCE_CONNECTION_NAME: staging-443710:us-central1:staging-sql
-  _DESTINATION_PROJECT_ID: staging-443710
-  _DESTINATION_DATABASE_NAME: demo-db
-  _DESTINATION_BUCKET_NAME: dump-sql-pranay
 options:
-  logging: CLOUD_LOGGING_ONLY 
+  logging: CLOUD_LOGGING_ONLY
+  
 timeout: "1200s"  # Set timeout for long-running operations
